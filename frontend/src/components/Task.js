@@ -8,6 +8,8 @@ import { Button, List, ListItem, ListItemText, Dialog, DialogActions, Typography
 import Stack from '@mui/material/Stack';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import ProjectVisualize from './ProjectVisualize';
+
 
 const Container = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -19,9 +21,19 @@ const ItemType = {
     TASK: 'task',
 };
 
+const ProgressContainer = styled('div')(({ theme }) => ({
+    padding: theme.spacing(2),
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    marginTop: theme.spacing(2),
+}));
+
 const TaskForm = ({ projectId }) => {
+    
     const formatDate = (dateString) => {
-        return dateString.substring(0, 10); // This will work if the date is always in ISO format
+        if (dateString){
+        return dateString.substring(0, 10);
+        } // This will work if the date is always in ISO format
     };
 
     const dispatch = useDispatch();
@@ -29,6 +41,7 @@ const TaskForm = ({ projectId }) => {
     const [newTask, setNewTask] = useState({ name: '', assignedTo: '', status: '', dueDate:''});
     const [editingTask, setEditingTask] = useState(null);
     const [formValues, setFormValues] = useState({ name: '', assignedTo: '', status: '', dueDate:'' });
+    const [viewProgress, setviewProgress]= useState(false);
 
     const TaskSection = styled('div')(({ theme }) => ({
         flex: 1,
@@ -61,6 +74,7 @@ const TaskForm = ({ projectId }) => {
         setEditingTask(task);
         setFormValues({ name: task.name, assignedTo: task.assignedTo, status: task.status, dueDate: task.dueDate });
     };
+
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -131,10 +145,28 @@ const TaskForm = ({ projectId }) => {
             .map((task) => <Task key={task._id} task={task} />);
     };
 
+    const handleClickProgress =()=>{
+        setviewProgress(true)
+      }
+
     return (
         <DndProvider backend={HTML5Backend}>
+            
             <Container>
+                
                 <Typography variant="h2">Project Tasks</Typography>
+                {
+                    !viewProgress && (
+                        <Button onClick={handleClickProgress}>Show Progress</Button>
+                    )
+                }
+                
+                    {viewProgress && (
+                       <ProgressContainer>
+                       <ProjectVisualize tasks={tasks} />
+                       <Button onClick={() => setviewProgress(false)}>Hide Progress</Button>
+                   </ProgressContainer>
+                    )}
                 <form onSubmit={handleAddTask}>
                     <TextField
                         label="Task Name"

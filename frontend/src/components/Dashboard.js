@@ -29,7 +29,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { projects, loading, error } = useSelector((state) => state.projects);
-
+  const { tasks, err } = useSelector((state) => state.tasks);
+  const [viewProgress, setviewProgress]= useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [editingTask, seteditingTask]= useState(null);
@@ -41,6 +42,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
+
 
   const onAddProject = (e) => {
     e.preventDefault();
@@ -72,7 +74,9 @@ const Dashboard = () => {
     seteditingTask(null);
 
   }
+
   
+
 
   return (
     <Container>
